@@ -4,5 +4,5 @@
 
 1. Move the GLFW folder to D:\\
 
-2\. Copy glad.c in the project for the project to run
+2\. From GLFW drag and drop glad.c in VS "Source Files" for the project to run
 
