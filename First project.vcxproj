@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\GLFW\include\GLFW;D:\GLFW\include\glad;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <IncludePath>.\GLFW\include\GLFW;.\GLFW\include\glad;$(IncludePath)</IncludePath>
+    <LibraryPath>.\GLFW\lib-vc2022;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,7 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\GLFW\glad.c" />
+    <ClCompile Include="GLFW\glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="IndicesSuqareExercise.cpp" />
   </ItemGroup>

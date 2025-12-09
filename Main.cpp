@@ -15,7 +15,7 @@ void processInput(GLFWwindow* window);
 int* shadersLockAndLoad();
 
 // settings
-const unsigned int SCR_WIDTH = 800; 
+const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 int main()
@@ -35,6 +35,9 @@ int main()
     }
 
     glfwMakeContextCurrent(window);
+
+    // Disable VSync (uncap FPS). 0 = off, 1 = on, 2 = every other v-blank (if supported)
+    glfwSwapInterval(0);
 
     // Load all OpenGL function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -78,6 +81,10 @@ int main()
 
     int* shaders = shadersLockAndLoad();
 
+    double previousTime = glfwGetTime();
+    int frameCount = 0;
+    double timeBetweenCalls = 0.5; // seconds
+
     // Render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -102,6 +109,21 @@ int main()
         // check and call events and swap the buffers
         glfwPollEvents();
         glfwSwapBuffers(window);
+
+        // Measure speed
+        double currentTime = glfwGetTime();
+        double timeInterval = currentTime - previousTime;
+        
+        frameCount++;
+
+        if (timeInterval >= timeBetweenCalls)
+        {
+            // Display the frame count here any way you want.
+            std::cout << "FPS: " << frameCount << std::endl;
+
+            frameCount = 0;
+            previousTime = currentTime;
+        }
     }
 
     // De-allocate all resources once they've outlived their purpose
