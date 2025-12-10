@@ -4,8 +4,7 @@
 
 #include <string>
 #include "Shader.h"
-
-std::string loadShaderFromFile(const char* path);
+#include "stb_image.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -58,22 +57,21 @@ int main()
         0.0f,  0.5f, 0.0f,
     };
 
-    // Tr 2
-    float verticesDos[] = {
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        1.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    float texCoords[] = {
+        0.0f, 0.0f,  // lower-left corner  
+        1.0f, 0.0f,  // lower-right corner
+        0.5f, 1.0f   // top-center corner
     };
 
-    float verticesTres[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f,
-        -1.0f, 0.5f, 0.0f
-	};
+    float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-    unsigned int VAOs[3], VBOs[3];
-    glGenVertexArrays(3, VAOs);
-    glGenBuffers(3, VBOs);
+    unsigned int VAOs[1], VBOs[1];
+    glGenVertexArrays(1, VAOs);
+    glGenBuffers(1, VBOs);
 
 	// Tr 1
     glBindVertexArray(VAOs[0]);
@@ -82,26 +80,15 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // Tr 2
-    glBindVertexArray(VAOs[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesDos), verticesDos, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // Configuring the vertex attribute on attribute location 1
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-	// Tr 3
-    glBindVertexArray(VAOs[2]);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesTres), verticesTres, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-	Shader yellowShader("vertex.glsl", "yellow.frag");
 	Shader orangeShader("vertex.glsl", "orange.frag");
-	Shader uniformShader("vertex.glsl", "uniform.frag");
+
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // I think that's correct
+    glDeleteTextures(1, &texture);
 
     double previousTime = glfwGetTime();
     int frameCount = 0;
@@ -121,19 +108,6 @@ int main()
 		// Tr 1
 		orangeShader.use();
         glBindVertexArray(VAOs[0]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        // Tr 2
-		yellowShader.use();
-        glBindVertexArray(VAOs[1]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		// Tr 3 - with uniform color change
-		uniformShader.use();
-        float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        uniformShader.setVec4("ourColor", 0.0f, greenValue, 0.0f, 0.0f);
-        glBindVertexArray(VAOs[2]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // check and call events and swap the buffers
@@ -157,11 +131,9 @@ int main()
     }
 
     // De-allocate all resources once they've outlived their purpose
-    glDeleteVertexArrays(3, VAOs);
-    glDeleteBuffers(3, VBOs);
+    glDeleteVertexArrays(1, VAOs);
+    glDeleteBuffers(1, VBOs);
     glDeleteProgram(orangeShader.ID);
-    glDeleteProgram(yellowShader.ID);
-    glDeleteProgram(uniformShader.ID);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
