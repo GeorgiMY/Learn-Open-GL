@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="orange.frag" />
+    <None Include="rectangle.frag" />
     <None Include="uniform.frag" />
     <None Include="vertex.glsl" />
     <None Include="yellow.frag" />
